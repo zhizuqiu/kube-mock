@@ -105,6 +105,8 @@ func NewMockProvider(ctx context.Context, config MockConfig, cfg nodeutil.Provid
 }
 
 // CreatePod accepts a Pod definition and stores it in memory.
+// 当 pod env 中有 Downward API 时，例如存在 valueFrom.fieldRef.fieldPath: status.podIP 时
+// 则，不会触发 CreatePod ，见：https://github.com/virtual-kubelet/virtual-kubelet/issues/998
 func (p *MockProvider) CreatePod(ctx context.Context, pod *v1.Pod) error {
 	ctx, span := trace.StartSpan(ctx, "CreatePod")
 	defer span.End()
@@ -220,6 +222,15 @@ func (p *MockProvider) GetPod(ctx context.Context, namespace, name string) (pod 
 
 	if pod, ok := p.podsMock.Read(key); ok {
 		return pod, nil
+	} else {
+		// 如果 podsMock 中不存在，从 apiserver 中同步一下
+		if p.podTracker != nil {
+			podFromApiserver := p.podTracker.getPod(namespace, name)
+			if podFromApiserver != nil && podFromApiserver.DeletionTimestamp == nil {
+				p.podsMock.Write(key, podFromApiserver.DeepCopy())
+				return podFromApiserver, nil
+			}
+		}
 	}
 	return nil, errdefs.NotFoundf("pod \"%s/%s\" is not known to the provider", namespace, name)
 }
@@ -472,12 +483,12 @@ func (p *MockProvider) NotifyPods(ctx context.Context, notifier func(*v1.Pod)) {
 	p.notifier = notifier
 
 	p.podTracker = &PodsTracker{
-		pods:                  p.podsApiserver,
-		updateCb:              notifier,
-		handler:               p,
-		lastEventCheck:        time.UnixMicro(0),
-		eventRecorder:         p.eventRecorder,
-		statusUpdatesInterval: p.statusUpdatesInterval,
+		pods:           p.podsApiserver,
+		updateCb:       notifier,
+		handler:        p,
+		lastEventCheck: time.UnixMicro(0),
+		eventRecorder:  p.eventRecorder,
+		provider:       p,
 	}
 	go p.podTracker.StartTracking(ctx)
 

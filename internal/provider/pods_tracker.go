@@ -42,9 +42,9 @@ type PodsTracker struct {
 	updateCb func(*v1.Pod)
 	handler  PodsTrackerHandler
 
-	lastEventCheck        time.Time
-	eventRecorder         record.EventRecorder
-	statusUpdatesInterval time.Duration
+	lastEventCheck time.Time
+	eventRecorder  record.EventRecorder
+	provider       *MockProvider
 }
 
 // StartTracking starts the background tracking for created pods.
@@ -52,7 +52,7 @@ func (pt *PodsTracker) StartTracking(ctx context.Context) {
 	ctx, span := trace.StartSpan(ctx, "PodsTracker.StartTracking")
 	defer span.End()
 
-	statusUpdatesTimer := time.NewTimer(pt.statusUpdatesInterval)
+	statusUpdatesTimer := time.NewTimer(pt.provider.statusUpdatesInterval)
 	cleanupTimer := time.NewTimer(defaultCleanupInterval)
 	defer statusUpdatesTimer.Stop()
 	defer cleanupTimer.Stop()
@@ -66,7 +66,7 @@ func (pt *PodsTracker) StartTracking(ctx context.Context) {
 			return
 		case <-statusUpdatesTimer.C:
 			pt.updatePodsLoop(ctx)
-			statusUpdatesTimer.Reset(pt.statusUpdatesInterval)
+			statusUpdatesTimer.Reset(pt.provider.statusUpdatesInterval)
 		case <-cleanupTimer.C:
 			pt.cleanupDanglingPods(ctx)
 			cleanupTimer.Reset(defaultCleanupInterval)
@@ -103,10 +103,7 @@ func (pt *PodsTracker) updatePodsLoop(ctx context.Context) {
 	ctx, span := trace.StartSpan(ctx, "PodsTracker.updatePods")
 	defer span.End()
 
-	k8sPods, err := pt.pods.List(labels.Everything())
-	if err != nil {
-		log.L.WithError(err).Errorf("failed to retrieve pods list")
-	}
+	k8sPods := pt.getPods()
 	for _, pod := range k8sPods {
 		updatedPod := pod.DeepCopy()
 		ok := pt.processPodUpdates(ctx, updatedPod)
@@ -116,14 +113,33 @@ func (pt *PodsTracker) updatePodsLoop(ctx context.Context) {
 	}
 }
 
-func (pt *PodsTracker) cleanupDanglingPods(ctx context.Context) {
-	ctx, span := trace.StartSpan(ctx, "PodsTracker.cleanupDanglingPods")
-	defer span.End()
-
+func (pt *PodsTracker) getPods() []*v1.Pod {
 	k8sPods, err := pt.pods.List(labels.Everything())
 	if err != nil {
 		log.L.WithError(err).Errorf("failed to retrieve pods list")
 	}
+	var list []*v1.Pod
+	for _, pod := range k8sPods {
+		if pod.Spec.NodeName == pt.provider.nodeName {
+			list = append(list, pod)
+		}
+	}
+	return list
+}
+
+func (pt *PodsTracker) getPod(ns, name string) *v1.Pod {
+	k8sPod, err := pt.pods.Pods(ns).Get(name)
+	if err != nil {
+		log.L.WithError(err).Errorf("failed to retrieve pod")
+	}
+	return k8sPod
+}
+
+func (pt *PodsTracker) cleanupDanglingPods(ctx context.Context) {
+	ctx, span := trace.StartSpan(ctx, "PodsTracker.cleanupDanglingPods")
+	defer span.End()
+
+	k8sPods := pt.getPods()
 	activePods, err := pt.handler.ListActivePods(ctx)
 	if err != nil {
 		log.G(ctx).WithError(err).Errorf("failed to retrieve active container groups list")

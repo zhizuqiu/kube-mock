@@ -110,6 +110,7 @@ kubectl delete -f hack/crd/deploy.yaml
 
 ```sh
 docker buildx build -f Dockerfile -t zhizuqiu/kube-mock:v1alpha1 --platform=linux/amd64,linux/arm64 . --push
+docker buildx build -f hack/node/Dockerfile -t zhizuqiu/kube-mock-node:v1alpha1 --platform=linux/amd64,linux/arm64 . --push
 ```
 
 2. Generate the Deployment yaml:
