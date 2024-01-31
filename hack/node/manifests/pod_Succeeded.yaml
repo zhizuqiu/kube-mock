@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 1aec45547b7807bf28d8c8f03eeb44cfcf0f38480b04192f3f8360116cd1aab4
+    cni.projectcalico.org/podIP: ""
+    cni.projectcalico.org/podIPs: ""
+    comcast.github.io/check-name: dns-status-internal
+  creationTimestamp: "2024-01-29T06:36:21Z"
+  labels:
+    app: kuberhealthy-check
+    kuberhealthy-check-name: dns-status-internal
+    kuberhealthy-run-id: 8d0373c8-4f52-4020-b4e9-1f9fe3f3b8ab
+  name: dns-status-internal-1706510175
+  namespace: kuberhealthy
+  ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: kuberhealthy-5fcbf468f6-j6kk2
+      uid: 28ff96b3-e27e-44ef-8d63-58036af510f3
+  resourceVersion: "654257696"
+  uid: 56dcdc71-e5eb-42b5-a04b-9edae5faf624
+spec:
+  containers:
+    - env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: HOSTNAME
+          value: kubernetes.default
+        - name: KH_REPORTING_URL
+          value: http://kuberhealthy.kuberhealthy.svc.cluster.local/externalCheckStatus
+        - name: KH_RUN_UUID
+          value: 8d0373c8-4f52-4020-b4e9-1f9fe3f3b8ab
+        - name: KH_CHECK_RUN_DEADLINE
+          value: "1706511075"
+        - name: KH_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      image: dns-resolution-check:v1.5.0
+      imagePullPolicy: IfNotPresent
+      name: main
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: dns-internal-sa-token-ndgz8
+          readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: k8s-node01
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 999
+    runAsUser: 999
+  serviceAccount: dns-internal-sa
+  serviceAccountName: dns-internal-sa
+  terminationGracePeriodSeconds: 30
+  tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+  volumes:
+    - name: dns-internal-sa-token-ndgz8
+      secret:
+        defaultMode: 420
+        secretName: dns-internal-sa-token-ndgz8
+status:
+  conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T06:36:21Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T06:36:21Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T06:36:21Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T06:36:21Z"
+      status: "True"
+      type: PodScheduled
+  containerStatuses:
+    - containerID: docker://7dca58d9b8f52e91670eb6ec6941cf46206d844f3f7dbee6078237493a05fbf9
+      image: dns-resolution-check:v1.5.0
+      imageID: docker-pullable://dns-resolution-check@sha256:ed33dd2db706b1d49e22f2338db8e16a94a3acbd020b7911f5d09c459041b5e6
+      lastState: {}
+      name: main
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: docker://7dca58d9b8f52e91670eb6ec6941cf46206d844f3f7dbee6078237493a05fbf9
+          exitCode: 0
+          finishedAt: "2024-01-29T06:36:22Z"
+          reason: Completed
+          startedAt: "2024-01-29T06:36:22Z"
+  hostIP: 192.168.1.142
+  phase: Succeeded
+  podIP: 192.1.87.13
+  podIPs:
+    - ip: 192.1.87.13
+  qosClass: Burstable
+  startTime: "2024-01-29T06:36:21Z"

@@ -1,0 +1,136 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: b7c14b54ca889a543b89f3a905bbd5520f5b3e5e7364ad3084b8645b570ef4fe
+    cni.projectcalico.org/podIP: ""
+    cni.projectcalico.org/podIPs: ""
+    comcast.github.io/check-name: deployment
+  creationTimestamp: "2024-01-27T12:57:30Z"
+  labels:
+    app: kuberhealthy-check
+    kuberhealthy-check-name: deployment
+    kuberhealthy-run-id: a3e9a4b0-03fa-446f-9996-17385754d1f8
+  name: deployment-1706360244
+  namespace: kuberhealthy
+  ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: kuberhealthy-5fcbf468f6-j6kk2
+      uid: 28ff96b3-e27e-44ef-8d63-58036af510f3
+  resourceVersion: "653187263"
+  uid: ae573601-489f-46c8-a038-8c360bd7c40e
+spec:
+  containers:
+    - env:
+        - name: CHECK_DEPLOYMENT_REPLICAS
+          value: "4"
+        - name: CHECK_DEPLOYMENT_ROLLING_UPDATE
+          value: "true"
+        - name: CHECK_IMAGE
+          value: nginx-unprivileged:1.17.8
+        - name: CHECK_IMAGE_ROLL_TO
+          value: nginx-unprivileged:1.17.9
+        - name: CHECK_SERVICE_ACCOUNT
+          value: default
+        - name: KH_REPORTING_URL
+          value: http://kuberhealthy.kuberhealthy.svc.cluster.local/externalCheckStatus
+        - name: KH_RUN_UUID
+          value: a3e9a4b0-03fa-446f-9996-17385754d1f8
+        - name: KH_CHECK_RUN_DEADLINE
+          value: "1706361144"
+        - name: KH_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      image: deployment-check:v1.9.0
+      imagePullPolicy: IfNotPresent
+      name: deployment
+      resources:
+        limits:
+          cpu: 40m
+        requests:
+          cpu: 25m
+          memory: 15Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: deployment-sa-token-6kkrr
+          readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: k8s-node01
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 999
+    runAsUser: 999
+  serviceAccount: deployment-sa
+  serviceAccountName: deployment-sa
+  terminationGracePeriodSeconds: 60
+  tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+  volumes:
+    - name: deployment-sa-token-6kkrr
+      secret:
+        defaultMode: 420
+        secretName: deployment-sa-token-6kkrr
+status:
+  conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-27T12:58:40Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-27T12:58:40Z"
+      message: 'containers with unready status: [deployment]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-27T12:58:40Z"
+      message: 'containers with unready status: [deployment]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-27T12:57:30Z"
+      status: "True"
+      type: PodScheduled
+  containerStatuses:
+    - containerID: docker://c021bcb9d93d4cd12f483633ea01656c16f0c154d954a24a1d041fdd2b267c50
+      image: deployment-check:v1.9.0
+      imageID: docker-pullable://deployment-check@sha256:c4844c8fbba076936eac1ef6c9df5c4e3d9cec8e082b21360d1b17e255cd9883
+      lastState: {}
+      name: deployment
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: docker://c021bcb9d93d4cd12f483633ea01656c16f0c154d954a24a1d041fdd2b267c50
+          exitCode: 1
+          finishedAt: "2024-01-27T13:00:48Z"
+          reason: Error
+          startedAt: "2024-01-27T12:58:47Z"
+  hostIP: 192.168.1.142
+  phase: Failed
+  podIP: 192.1.87.46
+  podIPs:
+    - ip: 192.1.87.46
+  qosClass: Burstable
+  startTime: "2024-01-27T12:58:40Z"

@@ -1,0 +1,24 @@
+apiVersion: mock.zhizuqiu.cn/v1alpha1
+kind: Node
+metadata:
+  labels:
+    app.kubernetes.io/name: node
+    app.kubernetes.io/instance: node-sample
+    app.kubernetes.io/part-of: kube-mock
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kube-mock
+  name: node-sample
+spec:
+  suspend: false
+  image: "zhizuqiu/kube-mock-node:v1alpha1"
+  kubeconfigSecret: "kube-mock-node"
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  nodeConfig:
+    cpu: '128'
+    memory: '1000Gi'
+    pods: '500'

@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 1b91f67acb073bf9550bce92048f10442109071f2d190e3472649b8d53ad3474
+    cni.projectcalico.org/podIP: 192.1.87.27/32
+    cni.projectcalico.org/podIPs: 192.1.87.27/32
+    kubesphere.io/restartedAt: "2023-08-08T16:27:50Z"
+  creationTimestamp: "2024-01-29T02:44:50Z"
+  generateName: amp-ui-v3-54649cd5b9-
+  labels:
+    app: amp-ui-v3
+    pod-template-hash: 54649cd5b9
+  name: amp-ui-v3-54649cd5b9-4pdhs
+  namespace: kube-amp
+  ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: amp-ui-v3-54649cd5b9
+      uid: da9be3cf-492e-490e-8f60-b0e080410ad6
+  resourceVersion: "654163844"
+  uid: 243d6896-f659-4081-ad0c-0a6b161b0266
+spec:
+  containers:
+    - image: app-manager-platform-ui:dev_v3alpha1-2024-01-29-10-43
+      imagePullPolicy: Always
+      name: container-96zq8k
+      ports:
+        - containerPort: 80
+          name: http-80
+          protocol: TCP
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: "1"
+          memory: 1Gi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /etc/nginx/nginx.conf
+          name: volume-al1bj7
+          readOnly: true
+          subPath: nginx
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: default-token-dnbw9
+          readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: k8s-node01
+  nodeSelector:
+    kubernetes.io/hostname: k8s-node01
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+    - effect: NoSchedule
+      key: test
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+  volumes:
+    - configMap:
+        defaultMode: 420
+        items:
+          - key: nginx.conf
+            path: nginx
+        name: amp-ui-v3
+      name: volume-al1bj7
+    - name: default-token-dnbw9
+      secret:
+        defaultMode: 420
+        secretName: default-token-dnbw9
+status:
+  conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T02:44:50Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T02:46:31Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T02:46:31Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2024-01-29T02:44:50Z"
+      status: "True"
+      type: PodScheduled
+  containerStatuses:
+    - containerID: docker://d02a12b2eb2ed6066fa68b05164bfa7af38a066ed71f02900790b0768558d0aa
+      image: app-manager-platform-ui:dev_v3alpha1-2024-01-29-10-43
+      imageID: docker-pullable://app-manager-platform-ui@sha256:d4aaa28fb4c7ff314480884bdc49166897bcffeef3595f75adf754de4aa90cd6
+      lastState: {}
+      name: container-96zq8k
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2024-01-29T02:44:52Z"
+  hostIP: 192.168.1.142
+  phase: Running
+  podIP: 192.1.87.27
+  podIPs:
+    - ip: 192.1.87.27
+  qosClass: Guaranteed
+  startTime: "2024-01-29T02:44:50Z"
