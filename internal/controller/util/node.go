@@ -21,7 +21,7 @@ var (
 	memory                = "100Gi"
 	pods                  = "200"
 	startupTimeout        = "10s"
-	statusUpdatesInterval = "5s"
+	statusUpdatesInterval = "1s"
 	logLevel              = "debug"
 	KLogV                 = "2"
 	address               = "192.168.1.1"

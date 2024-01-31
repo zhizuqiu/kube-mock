@@ -1293,6 +1293,8 @@ spec:
                         type: string
                     type: object
                 type: object
+              statusUpdatesInterval:
+                type: string
               suspend:
                 type: boolean
               tolerations:
@@ -1449,6 +1451,24 @@ kind: ClusterRole
 metadata:
   name: kube-mock-manager-role
 rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - get
 - apiGroups:
   - ""
   resources:

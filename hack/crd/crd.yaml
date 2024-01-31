@@ -1280,6 +1280,8 @@ spec:
                         type: string
                     type: object
                 type: object
+              statusUpdatesInterval:
+                type: string
               suspend:
                 type: boolean
               tolerations:

@@ -174,16 +174,16 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 
 # Create CRDs yaml
 create-crd: manifests kustomize
-	$(KUSTOMIZE) build config/crd > samples/crd/crd.yaml
+	$(KUSTOMIZE) build config/crd > hack/crd/crd.yaml
 
 # Create deploy yaml
 create-deploy-yaml: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	$(KUSTOMIZE) build config/default > samples/crd/deploy.yaml
+	$(KUSTOMIZE) build config/default > hack/crd/deploy.yaml
 
 # Create RBAC yaml
 create-rbac: manifests kustomize
-	$(KUSTOMIZE) build config/rbac > samples/crd/rbac.yaml
+	$(KUSTOMIZE) build config/rbac > hack/crd/rbac.yaml
 
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
