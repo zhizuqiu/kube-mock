@@ -8,20 +8,23 @@ import (
 // Service is the K8s service entrypoint.
 type NodeServices interface {
 	client.Client
-	Node
+	NodeCrd
 	Pod
+	Node
 }
 
 type nodeServices struct {
 	client.Client
-	Node
+	NodeCrd
 	Pod
+	Node
 }
 
 func NewNodeServices(kubeClient client.Client, log logr.Logger) NodeServices {
 	return &nodeServices{
-		Client: kubeClient,
-		Node:   NewNodeService(kubeClient, log),
-		Pod:    NewPodService(kubeClient, log),
+		Client:  kubeClient,
+		NodeCrd: NewNodeCrdService(kubeClient, log),
+		Pod:     NewPodService(kubeClient, log),
+		Node:    NewNodeService(kubeClient, log),
 	}
 }

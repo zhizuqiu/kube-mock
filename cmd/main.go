@@ -95,6 +95,7 @@ func main() {
 	k8sServicesNode := k8s.NewNodeServices(mgr.GetClient(), logNode)
 	nodeHandler := controller.NewNodeHandler(
 		ensure.NewNodeEnsurer(k8sServicesNode, logNode),
+		ensure.NewNodeDeleteEnsurer(k8sServicesNode, logNode),
 		k8sServicesNode,
 		logNode,
 	)

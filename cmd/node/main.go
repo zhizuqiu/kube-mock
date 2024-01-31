@@ -129,6 +129,12 @@ func main() {
 		return nil
 	}
 
+	// cfg.NodeSpec.Labels
+	withLabels := func(cfg *nodeutil.NodeConfig) error {
+		cfg.NodeSpec.Labels["app.kubernetes.io/created-by"] = "kube-mock"
+		return nil
+	}
+
 	// cfg.NodeSpec.Status.NodeInfo.KubeletVersion
 	withVersion := func(cfg *nodeutil.NodeConfig) error {
 		cfg.NodeSpec.Status.NodeInfo.KubeletVersion = strings.Join([]string{k8sVersion, "vk-kube-mock", buildVersion}, "-")
@@ -167,7 +173,6 @@ func main() {
 		return nil
 	}
 
-	// todo
 	withWebhookAuth := func(cfg *nodeutil.NodeConfig) error {
 		if !webhookAuth {
 			cfg.Handler = api.InstrumentHandler(nodeutil.WithAuth(nodeutil.NoAuth(), cfg.Handler))
@@ -242,6 +247,7 @@ func main() {
 			},
 			withClient,
 			withTaint,
+			withLabels,
 			withVersion,
 			withTLSConfig,
 			withWebhookAuth,

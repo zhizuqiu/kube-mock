@@ -31,6 +31,8 @@ var (
 	volumeNameKubeconfig    = "volume-kubeconfig"
 	volumeNameApiserverCert = "volume-apiserver-cert"
 	volumeNameApiserverKey  = "volume-apiserver-key"
+
+	NodeFinalizer = "kueb-mock.zhizuqiu.github.com/finalizer"
 )
 
 func GetNodeLabels(node *v1alpha1.Node) map[string]string {

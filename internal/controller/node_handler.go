@@ -10,16 +10,18 @@ import (
 )
 
 type NodeHandler struct {
-	Ensurer     ensure.NodeEnsure
-	K8sServices k8s.NodeServices
-	Log         logr.Logger
+	Ensurer       ensure.NodeEnsure
+	DeleteEnsurer ensure.NodeDeleteEnsure
+	K8sServices   k8s.NodeServices
+	Log           logr.Logger
 }
 
-func NewNodeHandler(ensurer ensure.NodeEnsure, k8sServices k8s.NodeServices, log logr.Logger) *NodeHandler {
+func NewNodeHandler(ensurer ensure.NodeEnsure, deleteEnsurer *ensure.NodeDeleteEnsurer, k8sServices k8s.NodeServices, log logr.Logger) *NodeHandler {
 	return &NodeHandler{
-		Ensurer:     ensurer,
-		K8sServices: k8sServices,
-		Log:         log,
+		Ensurer:       ensurer,
+		DeleteEnsurer: deleteEnsurer,
+		K8sServices:   k8sServices,
+		Log:           log,
 	}
 }
 

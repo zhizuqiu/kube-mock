@@ -16,7 +16,18 @@ func (r *NodeReconciler) Ensure(el element.NodeElement) (element.NodeElement, er
 		return el, nil
 	}
 
-	// todo delete node
+	return el, nil
+}
+
+func (r *NodeReconciler) DeleteEnsure(el element.NodeElement) (element.NodeElement, error) {
+	err := util.NilError()
+
+	if el, err = r.NodeHandler.DeleteEnsurer.DeleteEnsureNode(el); err != nil {
+		return el, err
+	}
+	if el.Reconcile {
+		return el, nil
+	}
 
 	return el, nil
 }
