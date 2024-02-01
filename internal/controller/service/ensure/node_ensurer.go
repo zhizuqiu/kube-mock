@@ -74,11 +74,11 @@ func (r *NodeEnsurer) diffPods(need int, el element.NodeElement, filteredPods []
 
 	if diff < 0 {
 		el.Reconcile = true
-		r.Log.V(2).Info("Too few pod", "node", klog.KObj(el.Node), "need", need, "creating", diff)
+		r.Log.Info("Too few pod", "node", klog.KObj(el.Node), "need", need, "creating", diff)
 		return r.createPod(el)
 	} else if diff > 0 {
 		el.Reconcile = true
-		r.Log.V(2).Info("Too many pod", "node", klog.KObj(el.Node), "need", need, "deleting", diff)
+		r.Log.Info("Too many pod", "node", klog.KObj(el.Node), "need", need, "deleting", diff)
 		return r.deletePods(need, el, filteredPods, diff)
 	}
 	return el, nil
@@ -105,7 +105,7 @@ func (r *NodeEnsurer) syncPods(need int, el element.NodeElement, filteredPods []
 	for i := 0; i < need; i++ {
 		pod := filteredPods[i]
 		if !util.IsDesired(el.Node, pod) {
-			r.Log.V(2).Info("pod config diff", "node", klog.KObj(el.Node))
+			r.Log.Info("pod config diff", "node", klog.KObj(el.Node))
 			el.Reconcile = true
 			if err := r.K8SService.Delete(el.Ctx, &filteredPods[i]); err != nil {
 				return el, err

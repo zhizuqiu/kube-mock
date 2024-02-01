@@ -44,7 +44,7 @@ func GenerateSelectorLabels(component string, node *v1alpha1.Node) map[string]st
 		appNameLabelKey:      node.Name,
 		appComponentLabelKey: component,
 		appPartOfLabelKey:    appLabel,
-	}, node.Labels)
+	})
 }
 
 func CreateNodePodObj(node *v1alpha1.Node, ownerRefs []metav1.OwnerReference) *v1.Pod {
