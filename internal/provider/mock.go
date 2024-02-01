@@ -295,6 +295,8 @@ func (p *MockProvider) GetPods(ctx context.Context) ([]*v1.Pod, error) {
 
 	var pods []*v1.Pod
 
+	p.podsMock.RLock()
+	defer p.podsMock.RUnlock()
 	for _, pod := range p.podsMock.Map {
 		pods = append(pods, pod)
 	}
@@ -349,6 +351,8 @@ func (p *MockProvider) GetStatsSummary(ctx context.Context) (*stats.Summary, err
 	}
 
 	// Populate the Summary object with dummy stats for each pod known by this provider.
+	p.podsMock.RLock()
+	defer p.podsMock.RUnlock()
 	for _, pod := range p.podsMock.Map {
 		var (
 			// totalUsageNanoCores will be populated with the sum of the values of UsageNanoCores computes across all containers in the pod.
@@ -430,6 +434,7 @@ func (p *MockProvider) GetMetricsResource(ctx context.Context) ([]*dto.MetricFam
 	}
 
 	metricsMap := p.generateMockMetrics(nil, "node", nodeLabels)
+	p.podsMock.RLock()
 	for _, pod := range p.podsMock.Map {
 		podLabels := []*dto.LabelPair{
 			{
@@ -460,6 +465,7 @@ func (p *MockProvider) GetMetricsResource(ctx context.Context) ([]*dto.MetricFam
 			metricsMap = p.generateMockMetrics(metricsMap, "container", containerLabels)
 		}
 	}
+	p.podsMock.RUnlock()
 
 	res := []*dto.MetricFamily{}
 	for metricName := range metricsMap {
@@ -544,6 +550,8 @@ func (p *MockProvider) CleanupPod(ctx context.Context, ns, name string) error {
 }
 
 func (p *MockProvider) UpdateMockPodsStatus(ctx context.Context) {
+	p.podsMock.RLock()
+	defer p.podsMock.RUnlock()
 	for _, pod := range p.podsMock.Map {
 		p.patchPodStatus(ctx, pod)
 	}
