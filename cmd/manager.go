@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"flag"
+	"github.com/spf13/cobra"
 	"github.com/zhizuqiu/kube-mock/internal/controller/service/ensure"
 	"github.com/zhizuqiu/kube-mock/internal/controller/service/k8s"
 	"os"
@@ -39,34 +40,46 @@ import (
 )
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	scheme               = runtime.NewScheme()
+	setupLog             = ctrl.Log.WithName("setup")
+	metricsAddr          = ":8080"
+	enableLeaderElection = false
+	probeAddr            = ":8081"
+
+	descManager = "Reconcile Node CRs"
 )
+
+var managerCmd = &cobra.Command{
+	Use:   "manager",
+	Short: descManager,
+	Long:  descManager,
+	Run: func(cmd *cobra.Command, args []string) {
+		runManager()
+	},
+}
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(mockv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
-}
 
-func main() {
-	var metricsAddr string
-	var enableLeaderElection bool
-	var probeAddr string
-	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
-	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
+	managerCmd.Flags().StringVar(&metricsAddr, "metrics-bind-address", metricsAddr, "The address the metric endpoint binds to.")
+	managerCmd.Flags().StringVar(&probeAddr, "health-probe-bind-address", probeAddr, "The address the probe endpoint binds to.")
+	managerCmd.Flags().BoolVar(&enableLeaderElection, "leader-elect", enableLeaderElection,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
+
 	opts := zap.Options{
 		Development: true,
 	}
 	opts.BindFlags(flag.CommandLine)
-	flag.Parse()
-
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	rootCmd.AddCommand(managerCmd)
+}
+
+func runManager() {
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
 		MetricsBindAddress:     metricsAddr,

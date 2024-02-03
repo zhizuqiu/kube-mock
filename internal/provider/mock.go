@@ -51,12 +51,13 @@ type MockProvider struct { //nolint:golint
 	operatingSystem    string
 	internalIP         string
 	daemonEndpointPort int32
-	podsMock           *util.SafeMap
-	config             MockConfig
-	startTime          time.Time
-	notifier           func(*v1.Pod)
-	podTracker         *PodsTracker
-	mockPodTracker     *MockPodsTracker
+
+	podsMock       *util.SafeMap
+	config         MockConfig
+	startTime      time.Time
+	notifier       func(*v1.Pod)
+	podTracker     *PodsTracker
+	mockPodTracker *MockPodsTracker
 
 	statusUpdatesInterval time.Duration
 }
@@ -321,11 +322,16 @@ func (p *MockProvider) ConfigureNode(ctx context.Context, n *v1.Node) { //nolint
 		os = "linux"
 	}
 	n.Status.NodeInfo.OperatingSystem = os
-	// todo
-	// n.Status.NodeInfo.Architecture = "amd64"
 
+	if len(n.Labels) < 1 {
+		p.patchDefaultLabels(n)
+	}
+}
+
+func (p *MockProvider) patchDefaultLabels(n *v1.Node) {
 	// report both old and new styles of OS information
 	osLabelValue := strings.ToLower(p.operatingSystem)
+	n.ObjectMeta.Labels["app.kubernetes.io/created-by"] = "kube-mock"
 	n.ObjectMeta.Labels["beta.kubernetes.io/os"] = osLabelValue
 	n.ObjectMeta.Labels["kubernetes.io/os"] = osLabelValue
 	n.ObjectMeta.Labels["alpha.service-controller.kubernetes.io/exclude-balancer"] = "true"

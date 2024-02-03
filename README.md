@@ -1,10 +1,23 @@
-# kube-mock
-模拟 kubelet
+# Kube-mock
+
+![kube-mock.svg](doc%2Fimages%2Fkube-mock.svg)
+
+Kube-mock 是一个基于 [virtual-kubelet](https://github.com/virtual-kubelet/virtual-kubelet) 的 Kubernetes Kubelet 实现，它伪装成 Kubelet 模拟 pod 运行状态的变化。
+
+---
 
 ## Description
-通过运行虚拟的 kubelet 节点，模拟 pod 运行状态的变化。
+
+整个系统由以下几个组件组成：
+
+- [manager](doc/manager.md) 是个 Operator，负责调协 `Nodes.mock.zhizuziu.cn` 自定义资源，进行相应 kube-mock kubelet 的创建和删除。
+- [node](doc/tools) 伪装成 Kubelet，并模拟 pod 运行状态的变化。
+- [tools](doc/tools.md) 提供了一些工具。
+- - `mock` 命令用于读取 apiserver ，生成 kubernetes node 对应的 `Nodes.mock.zhizuziu.cn` yaml 资源文件
 
 ![kube-mock.png](doc/images/kube-mock.png)
+
+---
 
 ## Getting Started
 
@@ -82,6 +95,8 @@ spec:
 - `zhizuqiu.github.com/delayFailed`：自 pod 创建起，运行状态变为 `Failed` 的延迟时间
 - `zhizuqiu.github.com/mockStatus`：更加灵活的方式，pod 的运行状态变由 `MockStatus` 自定义资源进行定义，通过此 `Annotation` 与指定的 `MockStatus` 进行关联 【待实现】
 
+---
+
 ### Running on the cluster
 
 1. Deploy the controller to the cluster:
@@ -97,6 +112,8 @@ kubectl -n kube-mock-system create secret generic kube-mock-node --from-file=con
 kubectl apply -f hack/cr/mock_v1alpha1_node.yaml
 ```
 
+---
+
 ### Uninstall CRDs
 To delete the CRDs from the cluster:
 
@@ -104,13 +121,14 @@ To delete the CRDs from the cluster:
 kubectl delete -f hack/crd/deploy.yaml
 ```
 
+---
+
 ### Build
 
 1. Build and push image:
 
 ```sh
 docker buildx build -f Dockerfile -t zhizuqiu/kube-mock:v1alpha1 --platform=linux/amd64,linux/arm64 . --push
-docker buildx build -f hack/node/Dockerfile -t zhizuqiu/kube-mock-node:v1alpha1 --platform=linux/amd64,linux/arm64 . --push
 ```
 
 2. Generate the Deployment yaml:
@@ -118,6 +136,7 @@ docker buildx build -f hack/node/Dockerfile -t zhizuqiu/kube-mock-node:v1alpha1 
 make create-deploy-yaml IMG=zhizuqiu/kube-mock:v1alpha1
 ```
 
+---
 
 ## License
 

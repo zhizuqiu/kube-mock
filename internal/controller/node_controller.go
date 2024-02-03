@@ -21,7 +21,7 @@ import (
 	"github.com/go-logr/logr"
 	mockv1alpha1 "github.com/zhizuqiu/kube-mock/api/v1alpha1"
 	"github.com/zhizuqiu/kube-mock/internal/controller/service/element"
-	"github.com/zhizuqiu/kube-mock/internal/controller/util"
+	"github.com/zhizuqiu/kube-mock/internal/util"
 	v1 "k8s.io/api/core/v1"
 	apperrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"

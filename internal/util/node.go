@@ -150,7 +150,8 @@ func pullPolicy(specPolicy v1.PullPolicy) v1.PullPolicy {
 
 func createNodeCommand(node *v1alpha1.Node) []string {
 	return []string{
-		"/app/virtual-kubelet",
+		"/kubemock",
+		"node",
 		fmt.Sprintf("--nodename"),
 		fmt.Sprintf(node.Name),
 		fmt.Sprintf("--cpu"),

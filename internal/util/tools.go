@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/go-logr/logr"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog/v2"
 	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -85,4 +88,48 @@ func defaultString(val string, defaultVal string) string {
 		return defaultVal
 	}
 	return val
+}
+
+func GetK8sClient(kubeConfigPath string, qps float32, burst int) (*kubernetes.Clientset, error) {
+	// use the current context in kubeconfig
+	var config *rest.Config
+	var err error
+
+	if kubeConfigPath == "" {
+		// creates the in-cluster config
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// use the current context in kubeconfig
+		config, err = clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	config.QPS = qps
+	config.Burst = burst
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return clientset, nil
+}
+
+func LabelsStrToMap(lStr string) map[string]string {
+	labels := make(map[string]string)
+	ls := strings.Split(lStr, ",")
+	for _, label := range ls {
+		kv := strings.Split(label, "=")
+		if len(kv) > 1 {
+			labels[kv[0]] = kv[1]
+		} else if len(kv) == 1 {
+			labels[kv[0]] = ""
+		}
+	}
+	return labels
 }

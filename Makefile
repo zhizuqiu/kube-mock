@@ -181,10 +181,6 @@ create-deploy-yaml: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default > hack/crd/deploy.yaml
 
-# Create RBAC yaml
-create-rbac: manifests kustomize
-	$(KUSTOMIZE) build config/rbac > hack/crd/rbac.yaml
-
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | $(KUBECTL) delete --ignore-not-found=$(ignore-not-found) -f -

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/zhizuqiu/kube-mock/internal/controller/service/element"
-	"github.com/zhizuqiu/kube-mock/internal/controller/util"
+	"github.com/zhizuqiu/kube-mock/internal/util"
 )
 
 func (r *NodeReconciler) Ensure(el element.NodeElement) (element.NodeElement, error) {

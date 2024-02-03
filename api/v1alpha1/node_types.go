@@ -60,16 +60,15 @@ type NodeConfig struct {
 	StartupTimeout string `json:"startupTimeout,omitempty"`
 	LogLevel       string `json:"logLevel,omitempty"`
 	KLogV          string `json:"kLogV,omitempty"`
+
+	Label  map[string]string `json:"label,omitempty"`
+	Taints []v1.Taint        `json:"taints,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	Pods  map[string]PodState `json:"pods,omitempty"`
-	Phase corev1.PodPhase     `json:"phase,omitempty"`
-	Ready bool                `json:"ready,omitempty"`
 }
 
 type PodState struct {

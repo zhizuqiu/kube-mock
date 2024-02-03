@@ -1668,7 +1668,8 @@ spec:
       - args:
         - --leader-elect
         command:
-        - /manager
+        - /kubemock
+        - manager
         image: zhizuqiu/kube-mock:v1alpha1
         livenessProbe:
           httpGet:
