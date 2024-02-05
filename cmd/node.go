@@ -116,8 +116,8 @@ func init() {
 	})
 
 	nodeCmd.Flags().StringVar(&nodeName, "nodename", nodeName, "kubernetes node name")
-	nodeCmd.Flags().StringVar(&labelsStr, "labels", nodeName, "kubernetes node labels (key1=value1,key2=value2)")
-	nodeCmd.Flags().StringVar(&taintsStr, "taints", nodeName, "kubernetes node taints (json)")
+	nodeCmd.Flags().StringVar(&labelsStr, "labels", "", "kubernetes node labels (key1=value1,key2=value2)")
+	nodeCmd.Flags().StringVar(&taintsStr, "taints", "", "kubernetes node taints (json)")
 	nodeCmd.Flags().StringVar(&cpu, "cpu", cpu, "kubernetes node cpu")
 	nodeCmd.Flags().StringVar(&memory, "memory", memory, "kubernetes node memory")
 	nodeCmd.Flags().StringVar(&podCapacity, "pods", podCapacity, "kubernetes node podCapacity")

@@ -174,9 +174,9 @@ func createNodeCommand(node *v1alpha1.Node) []string {
 		fmt.Sprintf(defaultString(node.Spec.NodeConfig.KLogV, KLogV)),
 	}
 
-	if len(node.Spec.NodeConfig.Label) > 0 {
+	if len(node.Spec.NodeConfig.Labels) > 0 {
 		commands = append(commands, fmt.Sprintf("--labels"))
-		commands = append(commands, fmt.Sprintf(LabelsMapToStr(node.Spec.NodeConfig.Label)))
+		commands = append(commands, fmt.Sprintf(LabelsMapToStr(node.Spec.NodeConfig.Labels)))
 	}
 
 	if len(node.Spec.NodeConfig.Taints) > 0 {

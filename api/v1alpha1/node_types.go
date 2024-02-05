@@ -62,7 +62,7 @@ type NodeConfig struct {
 	LogLevel       string `json:"logLevel,omitempty"`
 	KLogV          string `json:"kLogV,omitempty"`
 
-	Label  map[string]string `json:"label,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
 	Taints []v1.Taint        `json:"taints,omitempty"`
 }
 

@@ -1044,20 +1044,64 @@ spec:
                   address:
                     type: string
                   cpu:
-                    type: string
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
                   kLogV:
                     type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
                   logLevel:
                     type: string
                   memory:
-                    type: string
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
                   pods:
-                    type: string
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
                   port:
                     format: int32
                     type: integer
                   startupTimeout:
                     type: string
+                  taints:
+                    items:
+                      description: The node this Taint is attached to has the "effect"
+                        on any pod that does not tolerate the Taint.
+                      properties:
+                        effect:
+                          description: Required. The effect of the taint on pods that
+                            do not tolerate the taint. Valid effects are NoSchedule,
+                            PreferNoSchedule and NoExecute.
+                          type: string
+                        key:
+                          description: Required. The taint key to be applied to a
+                            node.
+                          type: string
+                        timeAdded:
+                          description: TimeAdded represents the time at which the
+                            taint was added. It is only written for NoExecute taints.
+                          format: date-time
+                          type: string
+                        value:
+                          description: The taint value corresponding to the taint
+                            key.
+                          type: string
+                      required:
+                      - effect
+                      - key
+                      type: object
+                    type: array
                 type: object
               nodeSelector:
                 additionalProperties:
@@ -1328,46 +1372,6 @@ spec:
             type: object
           status:
             description: NodeStatus defines the observed state of Node
-            properties:
-              phase:
-                description: PodPhase is a label for the condition of a pod at the
-                  current time.
-                type: string
-              pods:
-                additionalProperties:
-                  properties:
-                    containerPort:
-                      format: int32
-                      type: integer
-                    hostIP:
-                      type: string
-                    name:
-                      type: string
-                    phase:
-                      description: PodPhase is a label for the condition of a pod
-                        at the current time.
-                      type: string
-                    podIP:
-                      type: string
-                    podIPs:
-                      items:
-                        description: PodIP represents a single IP address allocated
-                          to the pod.
-                        properties:
-                          ip:
-                            description: IP is the IP address assigned to the pod
-                            type: string
-                        type: object
-                      type: array
-                    role:
-                      type: string
-                    startTime:
-                      format: date-time
-                      type: string
-                  type: object
-                type: object
-              ready:
-                type: boolean
             type: object
         type: object
     served: true

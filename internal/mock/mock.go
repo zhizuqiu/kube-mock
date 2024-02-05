@@ -119,7 +119,7 @@ func createNodes(nodes []corev1.Node) []v1alpha1.Node {
 					Pods:    *node.Status.Capacity.Pods(),
 					Address: getNodeAddress(node),
 					Port:    getNodePort(node),
-					Label:   node.Labels,
+					Labels:  node.Labels,
 					Taints:  node.Spec.Taints,
 				},
 			},

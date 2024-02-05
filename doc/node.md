@@ -5,7 +5,7 @@
 `node` 伪装成 Kubelet，并模拟 pod 运行状态的变化。
 
 ```shell
-$ kubemock node -h   
+$ kubemock node -h
 Implements a node on a Kubernetes cluster to mock the running of pods
 
 Usage:
@@ -35,7 +35,7 @@ Flags:
       --klog.stderrthreshold severity                           logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=true) (default 2)
       --klog.v Level                                            number for the log level verbosity
       --klog.vmodule moduleSpec                                 comma-separated list of pattern=N settings for file-filtered logging
-      --labels string                                           kubernetes node labels (key1=value1,key2=value2) (default "vk-kube-mock")
+      --labels string                                           kubernetes node labels (key1=value1,key2=value2)
       --log-level string                                        log level. (default "info")
       --memory string                                           kubernetes node memory (default "100Gi")
       --no-verify-clients                                       Do not require client certificate validation
@@ -45,5 +45,5 @@ Flags:
       --pods string                                             kubernetes node podCapacity (default "20")
       --startup-timeout duration                                How long to wait for the virtual-kubelet to start (default 20s)
       --status-updates-interval duration                        status updates interval. Default is 5s. (default 5s)
-      --taints string                                           kubernetes node taints (json) (default "vk-kube-mock")
+      --taints string                                           kubernetes node taints (json)
 ```
