@@ -89,18 +89,18 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			// Run finalization logic for NodeFinalizer. If the
 			// finalization logic fails, don't remove the finalizer so
 			// that we can retry during the next reconciliation.
-			if err := r.finalizeRedis(r.Log, el); err != nil {
-				r.Log.Error(err, "finalizeRedis error!", "req", req)
-				return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, nil
+			if err := r.finalizeNode(r.Log, el); err != nil {
+				r.Log.Error(err, "finalizeNode error!", "req", req)
+				return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, err
 			}
 
-			// Remove RedisFinalizer. Once all finalizers have been
+			// Remove NodeFinalizer. Once all finalizers have been
 			// removed, the object will be deleted.
 			controllerutil.RemoveFinalizer(el.Node, util.NodeFinalizer)
 			err := r.Update(context.Background(), el.Node)
 			if err != nil {
-				r.Log.Error(err, "Remove RedisFinalizer, Update CR error!", el.Node)
-				return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, nil
+				r.Log.Error(err, "Remove NodeFinalizer, Update CR error!", "CR", el.Node)
+				return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, err
 			}
 		}
 		return ctrl.Result{}, nil
@@ -111,8 +111,8 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		controllerutil.AddFinalizer(el.Node, util.NodeFinalizer)
 		err = r.Update(context.Background(), el.Node)
 		if err != nil {
-			r.Log.Error(err, "Add finalizer for this CR, Update CR error!", el.Node)
-			return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, nil
+			r.Log.Error(err, "Add finalizer for this CR, Update CR error!", "CR", el.Node)
+			return ctrl.Result{RequeueAfter: ErrorRequeueAfter}, err
 		}
 	}
 
@@ -128,7 +128,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	return ctrl.Result{}, nil
 }
 
-func (r *NodeReconciler) finalizeRedis(reqLogger logr.Logger, el element.NodeElement) error {
+func (r *NodeReconciler) finalizeNode(reqLogger logr.Logger, el element.NodeElement) error {
 	// needs to do before the CR can be deleted. Examples
 	// of finalizers include performing backups and deleting
 	// resources that are not owned by this CR, like a PVC.

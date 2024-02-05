@@ -31,7 +31,7 @@ metadata:
   namespace: kube-mock-system
 spec:
   suspend: false # 是否停止 kubelet 
-  image: "zhizuqiu/kube-mock-node:v1alpha1"
+  image: "zhizuqiu/kube-mock:v1alpha1"
   kubeconfigSecret: "kube-mock-node" #  用于 kubelet 连接的 kubeconfig 文件
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""

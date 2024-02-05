@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -50,11 +51,11 @@ type NodeSpec struct {
 }
 
 type NodeConfig struct {
-	Cpu     string `json:"cpu,omitempty"`
-	Memory  string `json:"memory,omitempty"`
-	Pods    string `json:"pods,omitempty"`
-	Address string `json:"address,omitempty"`
-	Port    int32  `json:"port,omitempty"`
+	Cpu     resource.Quantity `json:"cpu,omitempty"`
+	Memory  resource.Quantity `json:"memory,omitempty"`
+	Pods    resource.Quantity `json:"pods,omitempty"`
+	Address string            `json:"address,omitempty"`
+	Port    int32             `json:"port,omitempty"`
 	// todo other Resource
 
 	StartupTimeout string `json:"startupTimeout,omitempty"`

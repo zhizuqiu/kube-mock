@@ -10,7 +10,7 @@ metadata:
   name: node-sample
   namespace: kube-mock-system
 spec:
-  image: "zhizuqiu/kube-mock-node:v1alpha1"
+  image: "zhizuqiu/kube-mock:v1alpha1"
   imagePullPolicy: Always
   kubeconfigSecret: "kube-mock-node"
   nodeSelector:

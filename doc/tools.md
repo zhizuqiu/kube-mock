@@ -18,9 +18,10 @@ Aliases:
   mock, mock
 
 Flags:
+      --disable-filter-master    Disable the master node of the filter.
       --field-selector string    Selector (field query) to filter on, supports '=', '==', and '!='.(e.g. --field-selector
                                          key1=value1,key2=value2). The server only supports a limited number of field queries per type.
-  -f, --from-kubeconfig string   source kubernetes kubeconfig file path
+  -f, --from-kubeconfig string   source kubernetes kubeconfig file path.
   -h, --help                     help for mock
   -l, --selector string          Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2). Matching
                                          objects must satisfy all of the specified label constraints.

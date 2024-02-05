@@ -10,7 +10,7 @@ metadata:
   name: node-sample
 spec:
   suspend: false
-  image: "zhizuqiu/kube-mock-node:v1alpha1"
+  image: "zhizuqiu/kube-mock:v1alpha1"
   kubeconfigSecret: "kube-mock-node"
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""

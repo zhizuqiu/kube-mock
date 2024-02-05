@@ -13,9 +13,10 @@ import (
 )
 
 var (
-	fromKubeconfig = ""
-	labelSelector  = ""
-	fieldSelector  = ""
+	fromKubeconfig      = ""
+	labelSelector       = ""
+	fieldSelector       = ""
+	disableFilterMaster = false
 )
 var mockCmd = &cobra.Command{
 	Use:     "mock",
@@ -48,11 +49,12 @@ kubemock mock --from-kubeconfig /path/to/kubeconfig.yaml /path/to/nodes.yaml
 }
 
 func init() {
-	mockCmd.Flags().StringVarP(&fromKubeconfig, "from-kubeconfig", "f", "", "source kubernetes kubeconfig file path")
+	mockCmd.Flags().StringVarP(&fromKubeconfig, "from-kubeconfig", "f", "", "source kubernetes kubeconfig file path.")
 	mockCmd.Flags().StringVarP(&labelSelector, "selector", "l", "", `Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2). Matching
         objects must satisfy all of the specified label constraints.`)
 	mockCmd.Flags().StringVar(&fieldSelector, "field-selector", "", `Selector (field query) to filter on, supports '=', '==', and '!='.(e.g. --field-selector
         key1=value1,key2=value2). The server only supports a limited number of field queries per type.`)
+	mockCmd.Flags().BoolVar(&disableFilterMaster, "disable-filter-master", disableFilterMaster, `Disable the master node of the filter.`)
 
 	rootCmd.AddCommand(mockCmd)
 }
@@ -69,5 +71,5 @@ func runMock(ctx context.Context, args []string) error {
 		path = "nodes.yaml"
 	}
 
-	return mock.Run(ctx, fromKubeconfig, qps, burst, labelSelector, fieldSelector, path)
+	return mock.Run(ctx, fromKubeconfig, qps, burst, labelSelector, fieldSelector, disableFilterMaster, path)
 }

@@ -10,6 +10,7 @@ import (
 	"k8s.io/klog/v2"
 	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+	"sort"
 	"strings"
 	"time"
 )
@@ -132,4 +133,13 @@ func LabelsStrToMap(lStr string) map[string]string {
 		}
 	}
 	return labels
+}
+
+func LabelsMapToStr(labels map[string]string) string {
+	var ls []string
+	for key, value := range labels {
+		ls = append(ls, fmt.Sprintf("%s=%s", key, value))
+	}
+	sort.Strings(ls)
+	return strings.Join(ls, ",")
 }

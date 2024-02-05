@@ -159,7 +159,7 @@ func runNode(ctx context.Context) error {
 
 	labels = util.LabelsStrToMap(labelsStr)
 
-	_ = json.Unmarshal([]byte(taintsStr), taints)
+	_ = json.Unmarshal([]byte(taintsStr), &taints)
 
 	// cfg.Client
 	k8sClient, err := util.GetK8sClient(kubeConfigPath, qps, burst)

@@ -14,11 +14,12 @@ import (
 )
 
 var (
-	dirPerm  = 0755
-	filePerm = 0666
+	dirPerm          = 0755
+	filePerm         = 0666
+	defaultNamespace = "kube-mock-system"
 )
 
-func Run(ctx context.Context, fromKubeconfig string, qps float32, burst int, labelSelector, fieldSelector, path string) (retErr error) {
+func Run(ctx context.Context, fromKubeconfig string, qps float32, burst int, labelSelector, fieldSelector string, disableFilterMaster bool, path string) (retErr error) {
 	k8sClient, err := util.GetK8sClient(fromKubeconfig, qps, burst)
 	if err != nil {
 		log.G(ctx).Fatal(err)
@@ -32,7 +33,12 @@ func Run(ctx context.Context, fromKubeconfig string, qps float32, burst int, lab
 		return err
 	}
 
-	list := createNodes(nodes.Items)
+	nodeList := nodes.Items
+	if !disableFilterMaster {
+		nodeList = filterMaster(nodeList)
+	}
+
+	list := createNodes(nodeList)
 
 	var printer printers.YAMLPrinter
 	buffer := &bytes.Buffer{}
@@ -53,15 +59,48 @@ func Run(ctx context.Context, fromKubeconfig string, qps float32, burst int, lab
 	return nil
 }
 
+func filterMaster(nodes []corev1.Node) []corev1.Node {
+	var nodeList []corev1.Node
+	for _, node := range nodes {
+		if !hasMasterLabel(node.Labels) {
+			nodeList = append(nodeList, node)
+		}
+	}
+	return nodeList
+}
+
+func hasMasterLabel(label map[string]string) bool {
+	if label == nil {
+		return false
+	}
+	if _, ok := label["node-role.kubernetes.io/control-plane"]; ok {
+		return true
+	}
+	if _, ok := label["node-role.kubernetes.io/control-plane"]; ok {
+		return true
+	}
+	if _, ok := label["node-role.kubernetes.io/master"]; ok {
+		return true
+	}
+	if value, ok := label["node"]; ok {
+		if value == "master" {
+			return true
+		}
+		return true
+	}
+	return false
+}
+
 func createNodes(nodes []corev1.Node) []v1alpha1.Node {
 	var list []v1alpha1.Node
 	for _, node := range nodes {
 		n := v1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: node.Name,
+				Name:      node.Name,
+				Namespace: defaultNamespace,
 			},
 			Spec: v1alpha1.NodeSpec{
-				Image:            "zhizuqiu/kube-mock-node:v1alpha1",
+				Image:            "zhizuqiu/kube-mock:v1alpha1",
 				ImagePullPolicy:  "Always",
 				KubeconfigSecret: "kube-mock-node",
 				NodeSelector: map[string]string{
@@ -75,10 +114,11 @@ func createNodes(nodes []corev1.Node) []v1alpha1.Node {
 					},
 				},
 				NodeConfig: v1alpha1.NodeConfig{
-					Cpu:     node.Status.Capacity.Cpu().String(),
-					Memory:  node.Status.Capacity.Memory().String(),
-					Pods:    node.Status.Capacity.Pods().String(),
+					Cpu:     *node.Status.Capacity.Cpu(),
+					Memory:  *node.Status.Capacity.Memory(),
+					Pods:    *node.Status.Capacity.Pods(),
 					Address: getNodeAddress(node),
+					Port:    getNodePort(node),
 					Label:   node.Labels,
 					Taints:  node.Spec.Taints,
 				},
@@ -97,6 +137,10 @@ func getNodeAddress(node corev1.Node) string {
 		}
 	}
 	return ""
+}
+
+func getNodePort(node corev1.Node) int32 {
+	return node.Status.DaemonEndpoints.KubeletEndpoint.Port
 }
 
 func writeFile(path string, value []byte) error {

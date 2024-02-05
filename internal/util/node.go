@@ -5,7 +5,9 @@ import (
 	"github.com/zhizuqiu/kube-mock/api/v1alpha1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/json"
 	"reflect"
+	"strconv"
 )
 
 var (
@@ -68,6 +70,8 @@ func CreateNodePodObj(node *v1alpha1.Node, ownerRefs []metav1.OwnerReference) *v
 			ImagePullSecrets: node.Spec.ImagePullSecrets,
 			Volumes:          volumes,
 			Containers:       []v1.Container{createContainer(node)},
+			// 不需要比较的
+			TerminationGracePeriodSeconds: int64P(0),
 		},
 	}
 
@@ -149,17 +153,17 @@ func pullPolicy(specPolicy v1.PullPolicy) v1.PullPolicy {
 }
 
 func createNodeCommand(node *v1alpha1.Node) []string {
-	return []string{
+	commands := []string{
 		"/kubemock",
 		"node",
 		fmt.Sprintf("--nodename"),
 		fmt.Sprintf(node.Name),
 		fmt.Sprintf("--cpu"),
-		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Cpu, cpu)),
+		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Cpu.String(), cpu)),
 		fmt.Sprintf("--memory"),
-		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Memory, memory)),
+		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Memory.String(), memory)),
 		fmt.Sprintf("--pods"),
-		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Pods, pods)),
+		fmt.Sprintf(defaultString(node.Spec.NodeConfig.Pods.String(), pods)),
 		fmt.Sprintf("--startup-timeout"),
 		fmt.Sprintf(defaultString(node.Spec.NodeConfig.StartupTimeout, startupTimeout)),
 		fmt.Sprintf("--status-updates-interval"),
@@ -169,6 +173,21 @@ func createNodeCommand(node *v1alpha1.Node) []string {
 		fmt.Sprintf("--klog.v"),
 		fmt.Sprintf(defaultString(node.Spec.NodeConfig.KLogV, KLogV)),
 	}
+
+	if len(node.Spec.NodeConfig.Label) > 0 {
+		commands = append(commands, fmt.Sprintf("--labels"))
+		commands = append(commands, fmt.Sprintf(LabelsMapToStr(node.Spec.NodeConfig.Label)))
+	}
+
+	if len(node.Spec.NodeConfig.Taints) > 0 {
+		commands = append(commands, fmt.Sprintf("--taints"))
+		t, err := json.Marshal(node.Spec.NodeConfig.Taints)
+		if err == nil {
+			commands = append(commands, fmt.Sprintf(string(t)))
+		}
+	}
+
+	return commands
 }
 
 func createNodeEnv(node *v1alpha1.Node) []v1.EnvVar {
@@ -179,7 +198,7 @@ func createNodeEnv(node *v1alpha1.Node) []v1.EnvVar {
 		},
 		{
 			Name:  "KUBELET_PORT",
-			Value: defaultString(node.Spec.NodeConfig.Pods, port),
+			Value: ternary(node.Spec.NodeConfig.Port == 0, port, strconv.Itoa(int(node.Spec.NodeConfig.Port))).(string),
 		},
 	}
 	if node.Spec.KubeconfigSecret != "" {
@@ -189,6 +208,13 @@ func createNodeEnv(node *v1alpha1.Node) []v1.EnvVar {
 		})
 	}
 	return env
+}
+
+func ternary(condition bool, trueVal, falseVal interface{}) interface{} {
+	if condition {
+		return trueVal
+	}
+	return falseVal
 }
 
 func createNodeVolumes(node *v1alpha1.Node) []v1.Volume {
@@ -224,6 +250,10 @@ func createVolume(name, secretName, item string) v1.Volume {
 }
 
 func int32P(i int32) *int32 {
+	return &i
+}
+
+func int64P(i int64) *int64 {
 	return &i
 }
 
