@@ -125,6 +125,9 @@ func LabelsStrToMap(lStr string) map[string]string {
 	labels := make(map[string]string)
 	ls := strings.Split(lStr, ",")
 	for _, label := range ls {
+		if label == "" {
+			continue
+		}
 		kv := strings.Split(label, "=")
 		if len(kv) > 1 {
 			labels[kv[0]] = kv[1]
