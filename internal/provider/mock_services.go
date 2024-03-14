@@ -390,6 +390,7 @@ func (p *MockProvider) createRunningStatus(ctx context.Context, pod *v1.Pod) *v1
 
 	creationTimestamp := pod.GetCreationTimestamp()
 	delay := getDelayDuration(ctx, delayRunningAnnotation, pod)
+	// FIXME: 当由于资源调度失败等原因，导致无法及时更新pod状态时，之后在走到这里的时候，startTime 便不正确了
 	startTime := metav1.NewTime(creationTimestamp.Add(delay))
 
 	podStatus := &v1.PodStatus{
