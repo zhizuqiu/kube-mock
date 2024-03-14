@@ -32,7 +32,8 @@ import (
 )
 
 var (
-	ErrorRequeueAfter = 10 * time.Second
+	ErrorRequeueAfter  = 10 * time.Second
+	NormalRequeueAfter = 30 * time.Second
 )
 
 // NodeReconciler reconciles a Node object
@@ -125,7 +126,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return ctrl.Result{}, nil
 	}
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{RequeueAfter: NormalRequeueAfter}, nil
 }
 
 func (r *NodeReconciler) finalizeNode(reqLogger logr.Logger, el element.NodeElement) error {

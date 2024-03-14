@@ -74,8 +74,8 @@ func (r *NodeEnsurer) diffPods(need int, el element.NodeElement, filteredPods []
 
 	if diff < 0 {
 		el.Reconcile = true
-		r.Log.Info("Too few pod", "node", klog.KObj(el.Node), "need", need, "creating", diff)
-		return r.createPod(el)
+		r.Log.Info("Too few pod", "node", klog.KObj(el.Node), "need", need, "creating", -diff)
+		return r.createPod(el, diff)
 	} else if diff > 0 {
 		el.Reconcile = true
 		r.Log.Info("Too many pod", "node", klog.KObj(el.Node), "need", need, "deleting", diff)
@@ -84,16 +84,18 @@ func (r *NodeEnsurer) diffPods(need int, el element.NodeElement, filteredPods []
 	return el, nil
 }
 
-func (r *NodeEnsurer) createPod(el element.NodeElement) (element.NodeElement, error) {
-	pod := util.CreateNodePodObj(el.Node, el.OwnerRefs)
-	if err := r.K8SService.Create(el.Ctx, pod); err != nil {
-		return el, err
+func (r *NodeEnsurer) createPod(el element.NodeElement, diff int) (element.NodeElement, error) {
+	for i := 0; i < -diff; i++ {
+		pod := util.CreateNodePodObj(el.Node, el.OwnerRefs)
+		if err := r.K8SService.Create(el.Ctx, pod); err != nil {
+			return el, err
+		}
 	}
 	return el, nil
 }
 
 func (r *NodeEnsurer) deletePods(need int, el element.NodeElement, filteredPods []v1.Pod, diff int) (element.NodeElement, error) {
-	for i := diff - 1; i >= need; i-- {
+	for i := diff; i >= need; i-- {
 		if err := r.K8SService.Delete(el.Ctx, &filteredPods[i]); err != nil {
 			return el, err
 		}
