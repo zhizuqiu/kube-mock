@@ -2,7 +2,7 @@
 
 ## manager
 
-`manager` 是个 Operator，负责调协 `Nodes.mock.zhizuziu.cn` 自定义资源，进行相应 kube-mock kubelet 的创建和删除。
+`manager` 是个 Operator，负责调协 `Nodes.mock.zhizuqiu.cn` 自定义资源，进行相应 kube-mock kubelet 的创建和删除。
 
 ```shell
 $ kubemock manager -h

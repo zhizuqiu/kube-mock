@@ -10,10 +10,10 @@ Kube-mock 是一个基于 [virtual-kubelet](https://github.com/virtual-kubelet/v
 
 整个系统由以下几个组件组成：
 
-- [manager](doc/manager.md) 是个 Operator，负责调协 `Nodes.mock.zhizuziu.cn` 自定义资源，进行相应 kube-mock kubelet 的创建和删除。
+- [manager](doc/manager.md) 是个 Operator，负责调协 `Nodes.mock.zhizuqiu.cn` 自定义资源，进行相应 kube-mock kubelet 的创建和删除。
 - [node](doc/node.md) 伪装成 Kubelet，并模拟 pod 运行状态的变化。
 - [tools](doc/tools.md) 提供了一些工具。
-- - `mock` 命令用于读取 apiserver ，生成 kubernetes node 对应的 `Nodes.mock.zhizuziu.cn` yaml 资源文件
+- - `mock` 命令用于读取 apiserver ，生成 kubernetes node 对应的 `Nodes.mock.zhizuqiu.cn` yaml 资源文件
 
 ![kube-mock.png](doc/images/kube-mock.png)
 

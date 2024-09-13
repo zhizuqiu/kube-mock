@@ -2,7 +2,7 @@
 
 ## mock
 
-`mock` 命令用于读取 apiserver ，生成 kubernetes node 对应的 `Nodes.mock.zhizuziu.cn` yaml 资源文件
+`mock` 命令用于读取 apiserver ，生成 kubernetes node 对应的 `Nodes.mock.zhizuqiu.cn` yaml 资源文件
 
 ```shell
 $ kubemock mock -h
